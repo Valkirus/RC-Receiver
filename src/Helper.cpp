@@ -12,14 +12,14 @@ int standProgress = 0;
 
 float standingDistanceAdjustment = 0;
 
-float distanceFromGroundBase = -60;
+float distanceFromGroundBase = -40;
 float distanceFromGround = 0; 
 float previousDistanceFromGround = 0;
 
-float liftHeight = 130;
-float landHeight = 70;
-float strideOvershoot = 10;
-float distanceFromCenter = 190;
+float liftHeight = 70;
+float landHeight = 10;
+float strideOvershoot = 0;
+float distanceFromCenter = 80;
 
 float crabTargetForwardAmount = 0;
 float crabForwardAmount = 0;
@@ -38,7 +38,7 @@ float joy2CurrentMagnitude = 0;
 
 unsigned long timeSinceLastInput = 0;
 
-float landingBuffer = 15;
+float landingBuffer = 0;
 
 int attackCooldown = 0;
 
@@ -49,7 +49,7 @@ Gait previousGait = Tri;
 
 int currentGaitID = 0;
 
-State currentState = Car;
+State currentState = Initialize;
 
 Vector3 ControlPoints[10];
 Vector3 RotateControlPoints[10];
@@ -59,18 +59,18 @@ Vector3 currentRot(180, 0, 180);
 float strideMultiplier[6] = {1, 1, 1, -1, -1, -1};
 float rotationMultiplier[6] = {-1, 0, 1, -1, 0 , 1};
 
-const Vector3 offsets1 = {90,75,-18};
-const Vector3 offsets2 = {93,75,-15};
-const Vector3 offsets3 = {93,75,-18}; 
-const Vector3 offsets4 = {87,80,-26};
-const Vector3 offsets5 = {85,89,-16};
-const Vector3 offsets6 = {93,85,-24};
+const Vector3 offsets1 = {90,75,-45};
+const Vector3 offsets2 = {93,75,-45};
+const Vector3 offsets3 = {93,75,-48}; 
+const Vector3 offsets4 = {87,80,-45};
+const Vector3 offsets5 = {85,89,-45};
+const Vector3 offsets6 = {93,110,80};
 const Vector3 offsets[6] = {offsets1, offsets2, offsets3, offsets4, offsets5, offsets6};
 
 
-const float a1 = 41;  //Coxa Length
-const float a2 = 116; //Femur Length
-const float a3 = 183; //Tibia Length   
+const float a1 = 29;  //Coxa Length
+const float a2 = 76; //Femur Length
+const float a3 = 106; //Tibia Length   
 float legLength = a1+a2+a3;
 
 Vector3 currentPoints[6];
@@ -313,11 +313,21 @@ void moveToPos(int leg, Vector3 pos){
   float phi3 = acos(constrain((pow(a2,2) + pow(a3,2) - pow(h,2)) / (2*a2*a3),-1,1));
   float theta3 = 180 - (phi3 * 180 / PI) + o3;
 
+  if (leg >= 3) {
+    theta2 = -(theta2); // Invert femur angle
+    theta3 = -(theta3 + 90); // Invert tibia angle
+  }
+
   targetRot = Vector3(theta1,theta2,theta3);
+  
   
   int coxaMicroseconds = angleToMicroseconds(targetRot.x);
   int femurMicroseconds = angleToMicroseconds(targetRot.y);
   int tibiaMicroseconds = angleToMicroseconds(targetRot.z);
+
+  coxaMicroseconds = constrain(coxaMicroseconds, 500, 2500);
+  femurMicroseconds = constrain(femurMicroseconds, 500, 2500);
+  tibiaMicroseconds = constrain(tibiaMicroseconds, 500, 2500);
 
   sendLegData(leg, coxaMicroseconds, femurMicroseconds, tibiaMicroseconds);
 

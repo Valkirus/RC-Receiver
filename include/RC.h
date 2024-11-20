@@ -19,6 +19,7 @@ struct RC_Data_Package {
 //Hexapod_Data_Package hex_data;
 
 extern RC_Data_Package rc_data;
+extern RC_Data_Package rc_data_previous;
 
 void SetupRC();
 void RC_DisplayData();

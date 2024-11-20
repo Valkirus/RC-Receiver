@@ -19,6 +19,8 @@ extern  float previousDistanceFromGround;
 
 extern float distanceFromCenter;
 
+extern float standingDistanceAdjustment;
+
 extern unsigned long timeSinceLastInput;
 
 enum State {
@@ -46,9 +48,11 @@ enum LegState {
   Reset
 };
 
+extern int totalGaits;
 extern State currentState;
 extern Gait currentGait;
 extern Gait previousGait;
+extern Gait gaits[6];
 extern int currentGaitID;
 
 extern Vector3 ControlPoints[10];

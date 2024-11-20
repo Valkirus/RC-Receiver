@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <carState.h>
+#include "carState.h"
 
 long elapsedTime = 0;
 long loopStartTime = 0;
@@ -43,10 +43,25 @@ void loop() {
   joy2CurrentVector = lerp(joy2CurrentVector, joy2TargetVector, 0.12);
   joy2CurrentMagnitude = lerp(joy2CurrentMagnitude, joy2TargetMagnitude, 0.12);  
 
-  if (abs(joy1CurrentMagnitude) >= 10 || abs(joy2CurrentMagnitude) >= 10) {
+  previousGait = currentGait;
+  if(rc_data.pushButton2 == 1  && rc_data_previous.pushButton2 == 0){
+    currentGaitID += 1;
+    if(currentGaitID == totalGaits){
+      currentGaitID = 0;
+    }    
+    
+    currentGait = gaits[currentGaitID];
+  }
+
+    if(abs(joy1CurrentMagnitude) >= 10 || abs(joy2CurrentMagnitude) >= 10){
     carState();
     timeSinceLastInput = millis();
     return;
   }
+
+  if ((timeSinceLastInput - millis()) > 5) {
+    standingState();
+    return;
+  }  
 
 }

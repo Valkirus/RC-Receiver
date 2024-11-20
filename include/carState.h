@@ -3,3 +3,5 @@
 
 Vector3 getGaitPoint(int leg, float pushFraction);
 void carState();
+void set3HighestLeg();
+void standingState();
